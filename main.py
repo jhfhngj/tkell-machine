@@ -1,23 +1,55 @@
 from tkinter import *
+from sys import argv
 from dataclasses import dataclass
-
-root = Tk()
-root.title("Tkell Machine")
-
+import json
 @dataclass
 class Cell:
     type: str
     x: int
     y: int
     facing: str
+def load_level(path="level.tkell"):
+    global cells
+    try:
+        with open(path, "r") as f:
+            data = json.load(f)
 
-cells = [
-    Cell("cwrotator", 10, 10, "down"),
-    Cell("cwrotator", 0, 20, "down"),
-    Cell("cwrotator", -10, 0, "down"),
-    Cell("mover", 0, 0, "right"),
-    Cell("generator", 20, 0, "right")
-]
+        cells = []
+        for c in data:
+            cells.append(Cell(
+                c["type"],
+                c["x"],
+                c["y"],
+                c["facing"]
+            ))
+
+        print("Loaded:", path)
+
+    except Exception as e:
+        print("Failed to load:", e)
+        print("Loading default...")
+        cells = [
+			Cell("cwrotator", 10, 10, "down"),
+			Cell("cwrotator", 0, 20, "down"),
+			Cell("cwrotator", -10, 0, "down"),
+			Cell("mover", 0, 0, "right"),
+			Cell("generator", 20, 0, "right")
+		]
+load_level()
+
+root = Tk()
+root.title("Tkell Machine")
+
+if len(argv) < 2:
+    argv.append("50")
+if len(argv) < 3:
+    argv.append("50")
+if len(argv) < 4:
+    argv.append("50")
+
+argv[1] = int(argv[1])
+argv[2] = int(argv[2])
+argv[3] = int(argv[3])
 
 running = True
 
@@ -65,7 +97,7 @@ def push_chain(start_x, start_y, dx, dy):
 def loop():
     if running:
         game.delete("all")
-        game.create_rectangle(0, 0, 400, 200, fill="gray")
+        game.create_rectangle(0, 0, argv[1]*10, argv[2]*10, fill="black")
 
         for cell in cells:
 			# Push cell
@@ -82,7 +114,7 @@ def loop():
                             newcell.x = cell.x + 10
                             newcell.y = cell.y
                             cells.append(newcell)
-                            push_chain(cell.x,cell.y,10,0)
+                            push_chain(cell.x-10,cell.y,10,0)
 
                 elif cell.facing == "left":
                     for rcell in cells:
@@ -91,7 +123,7 @@ def loop():
                             newcell.x = cell.x - 10
                             newcell.y = cell.y
                             cells.append(newcell)
-                            push_chain(cell.x,cell.y,-10,0)
+                            push_chain(cell.x+10,cell.y,-10,0)
 
                 elif cell.facing == "up":
                     for rcell in cells:
@@ -100,7 +132,7 @@ def loop():
                             newcell.y = cell.y - 10
                             newcell.x = cell.x
                             cells.append(newcell)
-                            push_chain(cell.x,cell.y,0,-10)
+                            push_chain(cell.x,cell.y-10,0,-10)
 
                 elif cell.facing == "down":
                     for rcell in cells:
@@ -109,7 +141,7 @@ def loop():
                             newcell.y = cell.y + 10
                             newcell.x = cell.x
                             cells.append(newcell)
-                            push_chain(cell.x,cell.y,0,10)
+                            push_chain(cell.x,cell.y+10,0,10)
 
             # Rotators
             if cell.type == "cwrotator":
@@ -166,10 +198,10 @@ def loop():
                     push_chain(cell.x, cell.y + 10, 0, 10)
                     cell.y += 10
 
-    root.after(100, loop)
+    root.after(argv[3], loop)
 
-game = Canvas(root, width=400, height=200)
+game = Canvas(root, width=argv[1]*10, height=argv[2]*10)
 game.pack()
 
-root.after(100, loop)
+root.after(argv[3], loop)
 root.mainloop()
