@@ -25,6 +25,12 @@ ROTATE_CW = {
     "down": "left",
     "left": "up"
 }
+ROTATE_CCW = {
+    "up": "left",
+    "left": "down",
+    "down": "right",
+    "right": "up"
+}
 
 def loop():
     if running:
@@ -84,7 +90,24 @@ def loop():
 
                     if adjacent and rcell.facing in ROTATE_CW:
                         rcell.facing = ROTATE_CW[rcell.facing]
+            # CCW rotator logic
+            if cell.type == "ccwrotator":
+                game.create_rectangle(cell.x, cell.y, cell.x+10, cell.y+10, fill="teal")
 
+                for rcell in cells:
+                    if rcell is cell:
+                        continue
+
+                    # Adjacent check (exactly one cell away)
+                    adjacent = (
+                        (rcell.x == cell.x - 10 and rcell.y == cell.y) or  # left
+                        (rcell.x == cell.x + 10 and rcell.y == cell.y) or  # right
+                        (rcell.y == cell.y - 10 and rcell.x == cell.x) or  # up
+                        (rcell.y == cell.y + 10 and rcell.x == cell.x)     # down
+                    )
+
+                    if adjacent and rcell.facing in ROTATE_CCW:
+                        rcell.facing = ROTATE_CCW[rcell.facing]
     root.after(1000, loop)  # shorter tick for smoother motion
 
 game = Canvas(root, width=400, height=200)
