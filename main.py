@@ -82,6 +82,7 @@ def loop():
                             newcell.x = cell.x + 10
                             newcell.y = cell.y
                             cells.append(newcell)
+                            push_chain(cell.x,cell.y,10,0)
 
                 elif cell.facing == "left":
                     for rcell in cells:
@@ -90,6 +91,7 @@ def loop():
                             newcell.x = cell.x - 10
                             newcell.y = cell.y
                             cells.append(newcell)
+                            push_chain(cell.x,cell.y,-10,0)
 
                 elif cell.facing == "up":
                     for rcell in cells:
@@ -98,6 +100,7 @@ def loop():
                             newcell.y = cell.y - 10
                             newcell.x = cell.x
                             cells.append(newcell)
+                            push_chain(cell.x,cell.y,0,-10)
 
                 elif cell.facing == "down":
                     for rcell in cells:
@@ -106,6 +109,7 @@ def loop():
                             newcell.y = cell.y + 10
                             newcell.x = cell.x
                             cells.append(newcell)
+                            push_chain(cell.x,cell.y,0,10)
 
             # Rotators
             if cell.type == "cwrotator":
