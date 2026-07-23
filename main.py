@@ -3,6 +3,8 @@ from dataclasses import dataclass
 
 root = Tk()
 
+root.title("Tkell Machine")
+
 @dataclass
 class Cell:
     type: str
