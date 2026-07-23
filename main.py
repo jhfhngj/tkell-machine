@@ -69,8 +69,10 @@ def loop():
         game.create_rectangle(0, 0, 400, 200, fill="gray")
 
         for cell in cells:
-
-            # GENERATOR FIRST
+			# Push cell
+            if cell.type=="push":
+                game.create_rectangle(cell.x,cell.y,cell.x+10,cell.y+10,fill="yellow")
+            # Generator
             if cell.type == "generator":
                 game.create_rectangle(cell.x, cell.y, cell.x+10, cell.y+10, fill="green")
 
@@ -106,7 +108,7 @@ def loop():
                             newcell.x = cell.x
                             cells.append(newcell)
 
-            # ROTATORS
+            # Rotators
             if cell.type == "cwrotator":
                 game.create_rectangle(cell.x, cell.y, cell.x+10, cell.y+10, fill="orange")
 
@@ -141,7 +143,7 @@ def loop():
                     if adjacent and rcell.facing in ROTATE_CCW:
                         rcell.facing = ROTATE_CCW[rcell.facing]
 
-            # ⭐ MOVER LAST (with chain pushing)
+            # Mover
             if cell.type == "mover":
                 game.create_rectangle(cell.x, cell.y, cell.x+10, cell.y+10, fill="blue")
 
