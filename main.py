@@ -37,7 +37,6 @@ ROTATE_CCW = {
 def dup(cell:Cell):
     return Cell(cell.type, cell.x, cell.y, cell.facing)
 
-# ⭐ CHAIN PUSHING FIX
 def push_chain(start_x, start_y, dx, dy):
     chain = []
     x, y = start_x, start_y
