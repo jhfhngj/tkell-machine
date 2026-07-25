@@ -231,5 +231,11 @@ def loop():
 game = Canvas(root, width=argv[1]*10, height=argv[2]*10)
 game.pack()
 
+arka = root.destroy
+def destro():
+	arka()
+	quit()
+root.destroy = destro
+
 root.after(argv[3], loop)
 root.mainloop()

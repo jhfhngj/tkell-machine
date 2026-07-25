@@ -1,1 +1,1 @@
-[{"type": "generator", "x": 100, "y": 210, "facing": "up"}, {"type": "generator", "x": 110, "y": 210, "facing": "right"}, {"type": "generator", "x": 110, "y": 220, "facing": "down"}, {"type": "generator", "x": 100, "y": 220, "facing": "left"}, {"type": "cwrotator", "x": 120, "y": 230, "facing": "left"}]
+[{"type": "mover", "x": 60, "y": 220, "facing": "right"}, {"type": "mover", "x": 60, "y": 230, "facing": "right"}, {"type": "generator", "x": 70, "y": 220, "facing": "down"}, {"type": "generator", "x": 70, "y": 230, "facing": "down"}]
