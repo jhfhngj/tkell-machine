@@ -2,6 +2,22 @@ from tkinter import *
 from sys import argv
 from dataclasses import dataclass
 import json
+from PIL import Image, ImageTk
+from time import process_time
+
+root = Tk()
+root.title("Tkell Machine")
+celltypes = {"mover":[],"cwrotator":[],"ccwrotator":[],"generator":[],"push":[],}
+typers = ["mover","cwrotator","ccwrotator","generator","push"]
+directions = ["down","right","up","left"]
+o = 0
+for wow in range(5):
+    base = Image.open(f"sprite_{wow}.png")
+    i = -90
+    for i in range(4):
+        img = base.rotate((90 * i)-(90 if wow != 3 else -270))
+        celltypes[typers[wow]].append(ImageTk.PhotoImage(img))
+
 @dataclass
 class Cell:
     type: str
@@ -33,12 +49,12 @@ def load_level(path="level.tkell"):
 			Cell("cwrotator", 0, 20, "down"),
 			Cell("cwrotator", -10, 0, "down"),
 			Cell("mover", 0, 0, "right"),
-			Cell("generator", 20, 0, "right")
+			Cell("generator", 20, 0, "right"),
+            Cell("push",40,0,"right")
 		]
 load_level()
 
-root = Tk()
-root.title("Tkell Machine")
+
 
 if len(argv) < 2:
     argv.append("50")
@@ -95,18 +111,23 @@ def push_chain(start_x, start_y, dx, dy):
 
 
 def loop():
+    toime = process_time()
     if running:
         game.delete("all")
         game.create_rectangle(0, 0, argv[1]*10, argv[2]*10, fill="black")
-
+        
         for cell in cells:
+            sethc = celltypes[cell.type]
 			# Push cell
             if cell.type=="push":
-                game.create_rectangle(cell.x,cell.y,cell.x+10,cell.y+10,fill="yellow")
+                #game.create_rectangle(cell.x,cell.y,cell.x+10,cell.y+10,fill="yellow")
+                img = sethc[directions.index(cell.facing)]
+                game.create_image(cell.x, cell.y, image = img, anchor = NW)
             # Generator
             if cell.type == "generator":
-                game.create_rectangle(cell.x, cell.y, cell.x+10, cell.y+10, fill="green")
-
+                #game.create_rectangle(cell.x, cell.y, cell.x+10, cell.y+10, fill="green")
+                img = sethc[directions.index(cell.facing)]
+                game.create_image(cell.x, cell.y, image = img, anchor = NW)
                 if cell.facing == "right":
                     for rcell in cells:
                         if rcell.x == cell.x - 10 and rcell.y == cell.y:
@@ -145,8 +166,9 @@ def loop():
 
             # Rotators
             if cell.type == "cwrotator":
-                game.create_rectangle(cell.x, cell.y, cell.x+10, cell.y+10, fill="orange")
-
+                #game.create_rectangle(cell.x, cell.y, cell.x+10, cell.y+10, fill="orange")
+                img = sethc[directions.index(cell.facing)]
+                game.create_image(cell.x, cell.y, image = img, anchor = NW)
                 for rcell in cells:
                     if rcell is cell:
                         continue
@@ -162,8 +184,9 @@ def loop():
                         rcell.facing = ROTATE_CW[rcell.facing]
 
             if cell.type == "ccwrotator":
-                game.create_rectangle(cell.x, cell.y, cell.x+10, cell.y+10, fill="teal")
-
+                #game.create_rectangle(cell.x, cell.y, cell.x+10, cell.y+10, fill="teal")
+                img = sethc[directions.index(cell.facing)]
+                game.create_image(cell.x, cell.y, image = img, anchor = NW)
                 for rcell in cells:
                     if rcell is cell:
                         continue
@@ -180,8 +203,9 @@ def loop():
 
             # Mover
             if cell.type == "mover":
-                game.create_rectangle(cell.x, cell.y, cell.x+10, cell.y+10, fill="blue")
-
+                #game.create_rectangle(cell.x, cell.y, cell.x+10, cell.y+10, fill="blue")
+                img = sethc[directions.index(cell.facing)]
+                game.create_image(cell.x, cell.y, image = img, anchor = NW)
                 if cell.facing == "right":
                     push_chain(cell.x + 10, cell.y, 10, 0)
                     cell.x += 10
@@ -197,6 +221,9 @@ def loop():
                 elif cell.facing == "down":
                     push_chain(cell.x, cell.y + 10, 0, 10)
                     cell.y += 10
+    toimetoo = process_time()
+    if toimetoo - toime > 100+argv[3]:
+        argv[3] += 30
 
     root.after(argv[3], loop)
 
