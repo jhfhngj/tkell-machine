@@ -54,7 +54,8 @@ def load_level(path="level.tkell"):
 		]
 load_level()
 
-
+def clamp(n, smallest, largest):
+    return max(smallest, min(n, largest))
 
 if len(argv) < 2:
     argv.append("50")
@@ -89,8 +90,11 @@ def push_chain(start_x, start_y, dx, dy):
     chain = []
     x, y = start_x, start_y
 
-    # Find all cells in front in a straight line
     while True:
+        # stop if next position is outside grid
+        if not (0 <= x <= argv[1]*10 and 0 <= y <= argv[2]*10):
+            break
+
         blocker = None
         for c in cells:
             if c.x == x and c.y == y:
@@ -104,11 +108,9 @@ def push_chain(start_x, start_y, dx, dy):
         x += dx
         y += dy
 
-    # Push entire chain forward
     for c in reversed(chain):
         c.x += dx
         c.y += dy
-
 
 def loop():
     toime = process_time()
@@ -117,6 +119,9 @@ def loop():
         game.create_rectangle(0, 0, argv[1]*10, argv[2]*10, fill="black")
         
         for cell in cells:
+            cell.x = clamp(cell.x,0,argv[1]*10)
+            cell.y = clamp(cell.y,0,argv[2]*10)
+
             sethc = celltypes[cell.type]
 			# Push cell
             if cell.type=="push":
@@ -223,7 +228,7 @@ def loop():
                     cell.y += 10
     toimetoo = process_time()
     if toimetoo - toime > 100+argv[3]:
-        argv[3] += 30
+        argv[3] += 200
 
     root.after(argv[3], loop)
 
