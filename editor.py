@@ -16,14 +16,13 @@ cells = []
 directions = ["up","right","down","left"]
 
 # EXACT same type order as simulation
-typers = ["mover","cwrotator","ccwrotator","generator","push"]
+typers = ["mover","cwrotator","ccwrotator","generator","push","wall"]
 
 # sprite storage
 cell_sprites = {t: [] for t in typers}
 
 def load_sprites():
-    # EXACT same rotation logic as your simulation
-    for wow in range(5):
+    for wow in range(6):
         base = Image.open(f"sprite_{wow}.png")
 
         for i in range(4):
@@ -131,6 +130,7 @@ def key(event):
     if event.char == "3": selected_type = "cwrotator"
     if event.char == "4": selected_type = "ccwrotator"
     if event.char == "5": selected_type = "push"
+    if event.char == "6": selected_type = "wall"
 
     if event.char == "e": facer = ROTATE_CW[facer]
     if event.char == "q": facer = ROTATE_CCW[facer]
