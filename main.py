@@ -109,7 +109,7 @@ def push_chain(start_x, start_y, dx, dy):
 		y += dy
 
 	for c in reversed(chain):
-		if not (process_time() - startime > 100):
+		if not (process_time() - startime > 1):
 			c.x += dx
 			c.y += dy
 			startime = process_time()
@@ -231,8 +231,8 @@ def loop():
 					push_chain(cell.x, cell.y + 10, 0, 10)
 					cell.y += 10
 	toimetoo = process_time()
-	if toimetoo - toime > 100+argv[3]:
-		argv[3] += 200
+	if toimetoo - toime > 1+argv[3]:
+		argv[3] += 2
 
 	root.after(argv[3], loop)
 
