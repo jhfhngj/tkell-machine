@@ -1,1 +1,1 @@
-[{"type": "generator", "x": 60, "y": 310, "facing": "right"}, {"type": "generator", "x": 70, "y": 310, "facing": "right"}]
+[{"type": "generator", "x": 190, "y": 270, "facing": "right"}, {"type": "generator", "x": 180, "y": 270, "facing": "up"}, {"type": "generator", "x": 180, "y": 280, "facing": "left"}, {"type": "generator", "x": 190, "y": 280, "facing": "down"}, {"type": "cwrotator", "x": 200, "y": 290, "facing": "down"}]
