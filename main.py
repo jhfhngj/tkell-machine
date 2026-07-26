@@ -9,12 +9,12 @@ from math import floor
 root = Tk()
 root.title("Tkell Machine")
 
-celltypes = {"mover":[], "cwrotator":[], "ccwrotator":[], "generator":[], "push":[], "wall":[]}
-typers = ["mover","cwrotator","ccwrotator","generator","push","wall"]
+celltypes = {"mover":[], "cwrotator":[], "ccwrotator":[], "generator":[], "push":[], "wall":[], "tkell":[]}
+typers = ["mover","cwrotator","ccwrotator","generator","push","wall","tkell"]
 directions = ["down","right","up","left"]
 
 # Load sprites
-for wow in range(6):
+for wow in range(7):
 	base = Image.open(f"sprite_{wow}.png")
 	for i in range(4):
 		img = base.rotate((90 * i)-(90 if wow != 3 else -270))
@@ -133,7 +133,37 @@ def loop():
 			img = celltypes[cell.type][directions.index(cell.facing)]
 			game.create_image(cell.x, cell.y, image=img, anchor=NW)
 
-			# WALLS DO NOTHING ELSE
+			# Tkell Cell
+			if cell.type == "tkell":
+				x = False
+				y = False
+				for rcell in cells:
+					if rcell is cell:
+						continue
+
+					if rcell.x == cell.x:
+						x = True
+					if rcell.y == cell.y:
+						y = True
+
+				# after scanning, move Tkell once
+				if x:
+					cell.x += 10
+				if y:
+					cell.y -= 10
+
+				# then apply effect to others
+				for rcell in cells:
+					if rcell is cell:
+						continue
+
+					if x and rcell.x == cell.x - 10:  # old axis
+						rcell.x -= 10
+					if y and rcell.y == cell.y + 10:  # old axis
+						rcell.y += 10
+
+				
+			# WALLS
 			if cell.type == "wall":
 				continue
 
