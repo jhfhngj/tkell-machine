@@ -9,12 +9,12 @@ from math import floor
 root = Tk()
 root.title("Tkell Machine")
 
-celltypes = {"mover":[], "cwrotator":[], "ccwrotator":[], "generator":[], "push":[], "wall":[], "tkell":[]}
-typers = ["mover","cwrotator","ccwrotator","generator","push","wall","tkell"]
+celltypes = {"mover":[], "cwrotator":[], "ccwrotator":[], "generator":[], "push":[], "wall":[], "tkell":[], "convertigas":[]}
+typers = ["mover","cwrotator","ccwrotator","generator","push","wall","tkell","convertigas"]
 directions = ["down","right","up","left"]
 
 # Load sprites
-for wow in range(7):
+for wow in range(8):
 	base = Image.open(f"sprite_{wow}.png")
 	for i in range(4):
 		img = base.rotate((90 * i)-(90 if wow != 3 else -270))
@@ -120,6 +120,16 @@ def push_chain(start_x, start_y, dx, dy):
         c.x = nx
         c.y = ny
 
+def adjacent(cell,rcell):
+	if rcell.x == cell.x and rcell.y == cell.y + 10:
+		return True
+	if rcell.y == cell.y and rcell.x == cell.x + 10:
+		return True
+	if rcell.x == cell.x and rcell.y == cell.y - 10:
+		return True
+	if rcell.y == cell.y and rcell.x == cell.x - 10:
+		return True
+	return False
 def loop():
 	toime = process_time()
 	if running:
@@ -132,6 +142,17 @@ def loop():
 
 			img = celltypes[cell.type][directions.index(cell.facing)]
 			game.create_image(cell.x, cell.y, image=img, anchor=NW)
+
+			if cell.type == "convertigas":
+				cell.y -= 10
+				for rcell in cells:
+					if adjacent(cell, rcell):
+						rcell.type = "convertigas"
+						rcell.facing = cell.facing
+					if rcell.x == cell.x and cell.y == rcell.y:
+						cell.y += 10
+						rcell.type = "convertigas"
+						rcell.facing = cell.facing
 
 			# Tkell Cell
 			if cell.type == "tkell":
