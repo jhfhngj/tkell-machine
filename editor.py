@@ -16,13 +16,13 @@ cells = []
 directions = ["up","right","down","left"]
 
 # exact same type order as simulation
-typers = ["mover","cwrotator","ccwrotator","generator","push","wall","tkell"]
+typers = ["mover","cwrotator","ccwrotator","generator","push","wall","tkell","convertigas"]
 
 # sprite storage
 cell_sprites = {t: [] for t in typers}
 
 def load_sprites():
-    for wow in range(7):
+    for wow in range(8):
         base = Image.open(f"sprite_{wow}.png")
 
         for i in range(4):
@@ -125,13 +125,10 @@ ROTATE_CCW = {
 
 def key(event):
     global selected_type, facer
-    if event.char == "1": selected_type = "mover"
-    if event.char == "2": selected_type = "generator"
-    if event.char == "3": selected_type = "cwrotator"
-    if event.char == "4": selected_type = "ccwrotator"
-    if event.char == "5": selected_type = "push"
-    if event.char == "6": selected_type = "wall"
-    if event.char == "7": selected_type = "tkell"
+    try:
+        if int(event.char) <= len(typers): selected_type = typers[int(event.char)-1]
+    except:
+        pass
 
     if event.char == "e": facer = ROTATE_CW[facer]
     if event.char == "q": facer = ROTATE_CCW[facer]

@@ -130,7 +130,9 @@ def adjacent(cell,rcell):
 	if rcell.y == cell.y and rcell.x == cell.x - 10:
 		return True
 	return False
+
 def loop():
+	global adjacent
 	toime = process_time()
 	if running:
 		game.delete("all")
@@ -143,9 +145,12 @@ def loop():
 			img = celltypes[cell.type][directions.index(cell.facing)]
 			game.create_image(cell.x, cell.y, image=img, anchor=NW)
 
+			# Convertigas
 			if cell.type == "convertigas":
 				cell.y -= 10
 				for rcell in cells:
+					if rcell is cell:
+						continue
 					if adjacent(cell, rcell):
 						rcell.type = "convertigas"
 						rcell.facing = cell.facing
