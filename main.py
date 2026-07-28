@@ -3,7 +3,7 @@ from sys import argv
 from dataclasses import dataclass
 import json
 from PIL import Image, ImageTk
-from time import process_time
+from time import process_time,sleep
 from math import floor
 
 root = Tk()
@@ -46,6 +46,7 @@ def load_level(path="level.tkell"):
 		]
 
 load_level()
+grid = {(c.x, c.y): c for c in cells}
 
 def clamp(n, smallest, largest):
 	return max(smallest, min(n, largest))
@@ -70,55 +71,32 @@ def is_wall(nx, ny):
 	return any(c.x == nx and c.y == ny and c.type == "wall" for c in cells)
 
 def push_chain(start_x, start_y, dx, dy):
-    chain = []
-    x, y = start_x, start_y
+	try:
+		chain = []
+		x, y = start_x, start_y
 
-    # 1) Build the chain
-    while True:
-        # stop if outside grid
-        if not (0 <= x <= argv[1]*10 and 0 <= y <= argv[2]*10):
-            break
+		while True:
+			blocker = grid.get((x, y))
 
-        blocker = None
-        for c in cells:
-            if c.x == x and c.y == y:
-                blocker = c
-                break
+			if blocker is None or blocker.type == "wall":
+				break
 
-        # stop if no cell or hit a wall
-        if blocker is None or blocker.type == "wall":
-            break
+			chain.append(blocker)
+			x += dx
+			y += dy
 
-        chain.append(blocker)
-        x += dx
-        y += dy
+		for c in reversed(chain):
+			nx = c.x + dx
+			ny = c.y + dy
 
-    # 2) Limits
-    max_push = max(1, floor(len(cells) / 2))  # count-based cap
-    start_time = process_time()
-    time_limit = 0.05  # 50ms per push_chain call
-
-    # 3) Push with both limits
-    for i, c in enumerate(reversed(chain)):
-        # stop if too many cells
-        if i >= max_push:
-            break
-
-        # stop if too much CPU time
-        if process_time() - start_time > time_limit:
-            break
-
-        nx = c.x + dx
-        ny = c.y + dy
-
-        # don't push into walls or out of bounds
-        if not (0 <= nx <= argv[1]*10 and 0 <= ny <= argv[2]*10):
-            continue
-        if any(w.x == nx and w.y == ny and w.type == "wall" for w in cells):
-            continue
-
-        c.x = nx
-        c.y = ny
+			if grid.get((nx, ny)) is None:
+				# update grid instantly
+				del grid[(c.x, c.y)]
+				c.x = nx
+				c.y = ny
+				grid[(nx, ny)] = c
+	except:
+		pass
 
 def adjacent(cell,rcell):
 	if rcell.x == cell.x and rcell.y == cell.y + 10:
@@ -132,6 +110,8 @@ def adjacent(cell,rcell):
 	return False
 
 def loop():
+	global grid
+	grid = {(c.x, c.y): c for c in cells}
 	global adjacent
 	toime = process_time()
 	if running:
@@ -149,15 +129,13 @@ def loop():
 			if cell.type == "convertigas":
 				cell.y -= 10
 				for rcell in cells:
-					if rcell is cell:
+					if rcell is cell or rcell == cell:
 						continue
 					if adjacent(cell, rcell):
 						rcell.type = "convertigas"
-						rcell.facing = cell.facing
 					if rcell.x == cell.x and cell.y == rcell.y:
 						cell.y += 10
-						rcell.type = "convertigas"
-						rcell.facing = cell.facing
+						cells.remove(rcell)
 
 			# Tkell Cell
 			if cell.type == "tkell":
